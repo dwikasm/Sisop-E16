@@ -1,7 +1,6 @@
 #include<stdio.h>
 #include<pthread.h>
 int jum=0;
-
 void *prime(void *args){
 	int *a=(int*)args;
 	int i=2;
