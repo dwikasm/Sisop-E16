@@ -3,7 +3,7 @@
 int jum=0;
 void *prime(void *args){
 	int *a=(int*)args;
-	int i=2;printf("%p %d\n",(void*)args,*a);
+	int i=2;
 	while(i<=*a){
 		if(*a%i==0 && i==*a){
 			jum++;
