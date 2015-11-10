@@ -15,12 +15,14 @@ char *token,*pwd1,*pwd3,*pwdd1;
 	if(s==SIGSTOP){
 		printf("SIGSTOP");}
 	}*/
-main(){
+void main(){
 	char s[1000],s1[1000];
 /*	signal (SIGINT, a);
 	signal (SIGSTOP, a);
 	signal (SIGHUP, a);*/
 	char dflt[100];
+	int task1,task2;
+	char tsk1[100],tsk2[100];
 	getcwd(dflt,100);
 	int a,x,y; 
 	pid_t pid;
@@ -42,7 +44,81 @@ main(){
 				}
 				token=strtok(s1," ");
 				//printf("token = %s\n",token );
-				// TINGGAL COPY YANG BAWAH, waitnya gausah
+				for(a=0;a<(int)strlen(token);a++){
+				 	command[a]=token[a];
+				 	//printf("command[%d]=%c\n",a,command[a]);
+				}
+				//printf("%s\n",token);
+				token=strtok(NULL," ");
+				if(token!=NULL){
+					//printf("%s\n",token);
+					for(a=0;a<(int)strlen(token);a++){
+						attr[a]=token[a];
+						//printf("attr[%d]=%c\n",a,attr[a]);
+					}	
+				}
+				//printf("token =%s\ncommand=%s\nattr=%s\n",token,command,attr);
+				//printf("cmd = %d, attr = %d\n",(int)strlen(command),(int)strlen(attr) );
+				//if(strcmp(command,"cd")==0){printf("Berhasil\n");}
+				pid=fork();
+				if(pid==0){
+					getcwd(pwd2,100);
+					// printf("pwd2=%s\n",pwd2);
+					if(strcmp(command,"cd")==0){
+						// printf("Berhasil masuk\n");						
+						if(strcmp(attr,"..")==0){
+							pwdd1=strtok(pwd2,"/");
+							// printf("pwdd1=%s\n",pwdd1);
+							// for(a=0;a<(int)strlen(pwdd1);a++){
+							// 	pwdd[a]=pwdd1[a];
+							// 	printf("pwdd[%d] = %c\n",a,pwdd[a] );
+							// }
+							// strcat(pwdd,pwdd1);
+							while(pwdd1!=NULL){
+								strcpy(safe,pwdd);
+								if(pwdd1!=NULL){
+									strcat(pwdd,"/");
+									strcat(pwdd,pwdd1);
+									// printf("pwdd = %s\n",pwdd );
+									// printf("safe = %s\n", safe);
+								}
+								pwdd1=strtok(NULL,"/");
+							}
+							// printf("safe f=%s\n", safe);
+							// printf("pwdd f= %s\n", pwdd);
+							chdir(safe);
+						}
+						else if(attr[0]=='/'){
+							// printf("%s\n", attr);
+							chdir(attr);
+						}
+						else {
+							strcat(pwd2,"/");
+							 // printf("%s\n",pwd2 );
+							strcat(pwd2,attr);
+							 // printf("%s\n",pwd2 );
+							chdir(pwd2);
+							// getcwd(pwd2,100);
+							// printf("now %s\n", pwd2);
+						}
+					}
+					else if(strcmp(attr,"")==0){
+						strcpy(tsk1,"/bin/");
+						strcat(tsk1,command);
+						strcpy(tsk2,"/usr/bin/");
+						strcat(tsk2,command);
+						task1=execlp(tsk1,command,pwd2,NULL);
+						task2=execlp(tsk2,command,pwd2,NULL);
+					}
+					else{
+						strcpy(tsk1,"/bin/");
+						strcat(tsk1,command);
+						strcpy(tsk2,"/usr/bin/");
+						strcat(tsk2,command);
+						task1=execlp(tsk1,command,attr,pwd2,NULL);
+						task2=execlp(tsk2,command,attr,pwd2,NULL);
+					}
+				}
 			}
 			else{
 				token=strtok(s," ");
@@ -69,8 +145,8 @@ main(){
 					if(strcmp(command,"cd")==0){
 						// printf("Berhasil masuk\n");						
 						if(strcmp(attr,"..")==0){
-							// pwdd1=strtok(pwd2,"/");
-							printf("pwdd1=%s\n",pwdd1);
+							pwdd1=strtok(pwd2,"/");
+							// printf("pwdd1=%s\n",pwdd1);
 							// for(a=0;a<(int)strlen(pwdd1);a++){
 							// 	pwdd[a]=pwdd1[a];
 							// 	printf("pwdd[%d] = %c\n",a,pwdd[a] );
@@ -79,7 +155,6 @@ main(){
 							while(pwdd1!=NULL){
 								strcpy(safe,pwdd);
 								if(pwdd1!=NULL){
-									// if(pwd3==NULL)break;
 									strcat(pwdd,"/");
 									strcat(pwdd,pwdd1);
 									// printf("pwdd = %s\n",pwdd );
@@ -95,9 +170,6 @@ main(){
 							// printf("%s\n", attr);
 							chdir(attr);
 						}
-						else if(attr==""){
-							chdir(dflt);
-						}
 						else {
 							strcat(pwd2,"/");
 							 // printf("%s\n",pwd2 );
@@ -109,25 +181,20 @@ main(){
 						}
 					}
 					else if(strcmp(attr,"")==0){
-						// printf("masuk perintah tanpa atribut\n");
-						if(execlp("/bin",command,pwd2,NULL)==-1){
-							// printf("tes nyari ls\n");
-						}
-						else if(execlp("/usr/bin",command,pwd2,NULL)==-1){
-							// printf("tes nyari lsof\n");
-						}	
+						strcpy(tsk1,"/bin/");
+						strcat(tsk1,command);
+						strcpy(tsk2,"/usr/bin/");
+						strcat(tsk2,command);
+						task1=execlp(tsk1,command,pwd2,NULL);
+						task2=execlp(tsk2,command,pwd2,NULL);
 					}
 					else{
-						// printf("masuk perintah dengan atribut\n");
-						if(execlp("/bin",command,attr,pwd2,NULL)==-1){
-							// printf("command = %s\n", command);
-							// printf("attr = %s\n", attr);
-							// printf("pwd2 = %s\n", pwd2);
-							// printf("tes nyari ls\n");
-						}
-						else if(execlp("/usr/bin",command,attr,pwd2,NULL)==-1){
-							// printf("tes nyari lsof\n");
-						}	
+						strcpy(tsk1,"/bin/");
+						strcat(tsk1,command);
+						strcpy(tsk2,"/usr/bin/");
+						strcat(tsk2,command);
+						task1=execlp(tsk1,command,attr,pwd2,NULL);
+						task2=execlp(tsk2,command,attr,pwd2,NULL);
 					}
 				}
 				wait(0);
