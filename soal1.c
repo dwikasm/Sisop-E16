@@ -3,7 +3,7 @@
 #include<unistd.h>
 #include<signal.h>
 #include<stdlib.h>
-char command[100],attr[100],pwd2[100],pwdd[100],pwdd2[100],pwdd3[100],pwddd[100];
+char command[100],attr[100],pwd2[100],pwdd[100],pwdd2[100],pwdd3[100],pwddd[100],safe[100];
 char *token,*pwd1,*pwd3,*pwdd1;
 /*void a(int s){
 	if(s==SIGINT){
@@ -20,6 +20,8 @@ main(){
 /*	signal (SIGINT, a);
 	signal (SIGSTOP, a);
 	signal (SIGHUP, a);*/
+	char dflt[100];
+	getcwd(dflt,100);
 	int a,x,y; 
 	pid_t pid;
 	while (1){
@@ -67,55 +69,64 @@ main(){
 					if(strcmp(command,"cd")==0){
 						// printf("Berhasil masuk\n");						
 						if(strcmp(attr,"..")==0){
-							pwdd1=strtok(pwd2,"/");
-							// printf("pwdd1=%s\n",pwdd1);
-							for(a=0;a<(int)strlen(pwdd1);a++){
-								pwdd[a]=pwdd1[a];
-								// printf("pwdd[%d] = %c\n",a,pwdd[a] );
-							}
-							// while(pwdd1!=NULL){
-							// 	pwdd1=strtok(NULL, "/");
-							// 	printf("pwdd1 = %s\n", pwdd1);
-							// 	strcat(pwdd3,pwdd1);						INI BUAT APAAN COY
-							// 	if(pwdd1!=NULL){
-							// 		printf("pwddd = %s\n", pwddd);
-							// 		printf("pwdd3 = %s\n", pwdd3);
-							// 		strcat(pwddd,pwdd3);
-							// 	}
+							// pwdd1=strtok(pwd2,"/");
+							printf("pwdd1=%s\n",pwdd1);
+							// for(a=0;a<(int)strlen(pwdd1);a++){
+							// 	pwdd[a]=pwdd1[a];
+							// 	printf("pwdd[%d] = %c\n",a,pwdd[a] );
 							// }
-							// chdir(pwddd);
+							// strcat(pwdd,pwdd1);
+							while(pwdd1!=NULL){
+								strcpy(safe,pwdd);
+								if(pwdd1!=NULL){
+									// if(pwd3==NULL)break;
+									strcat(pwdd,"/");
+									strcat(pwdd,pwdd1);
+									// printf("pwdd = %s\n",pwdd );
+									// printf("safe = %s\n", safe);
+								}
+								pwdd1=strtok(NULL,"/");
+							}
+							// printf("safe f=%s\n", safe);
+							// printf("pwdd f= %s\n", pwdd);
+							chdir(safe);
 						}
 						else if(attr[0]=='/'){
 							// printf("%s\n", attr);
 							chdir(attr);
 						}
+						else if(attr==""){
+							chdir(dflt);
+						}
 						else {
 							strcat(pwd2,"/");
-							 printf("%s\n",pwd2 );
+							 // printf("%s\n",pwd2 );
 							strcat(pwd2,attr);
-							 printf("%s\n",pwd2 );
+							 // printf("%s\n",pwd2 );
 							chdir(pwd2);
+							// getcwd(pwd2,100);
+							// printf("now %s\n", pwd2);
 						}
 					}
 					else if(strcmp(attr,"")==0){
-						printf("masuk perintah tanpa atribut\n");
+						// printf("masuk perintah tanpa atribut\n");
 						if(execlp("/bin",command,pwd2,NULL)==-1){
-							printf("tes nyari ls\n");
+							// printf("tes nyari ls\n");
 						}
 						else if(execlp("/usr/bin",command,pwd2,NULL)==-1){
-							printf("tes nyari lsof\n");
+							// printf("tes nyari lsof\n");
 						}	
 					}
 					else{
-						printf("masuk perintah dengan atribut\n");
+						// printf("masuk perintah dengan atribut\n");
 						if(execlp("/bin",command,attr,pwd2,NULL)==-1){
-							printf("command = %s\n", command);
-							printf("attr = %s\n", attr);
-							printf("pwd2 = %s\n", pwd2);
-							printf("tes nyari ls\n");
+							// printf("command = %s\n", command);
+							// printf("attr = %s\n", attr);
+							// printf("pwd2 = %s\n", pwd2);
+							// printf("tes nyari ls\n");
 						}
 						else if(execlp("/usr/bin",command,attr,pwd2,NULL)==-1){
-							printf("tes nyari lsof\n");
+							// printf("tes nyari lsof\n");
 						}	
 					}
 				}
