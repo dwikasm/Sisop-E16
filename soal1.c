@@ -5,21 +5,13 @@
 #include<stdlib.h>
 char command[100],attr[100],pwd2[100],pwdd[100],pwdd2[100],pwdd3[100],pwddd[100],safe[100];
 char *token,*pwd1,*pwd3,*pwdd1;
-/*void a(int s){
-	if(s==SIGINT){
-		printf("SIGINT");
-	}
-	if(s==SIGHUP){
-		exit (0);//CTRL+D
-	}
-	if(s==SIGSTOP){
-		printf("SIGSTOP");}
-	}*/
+void sinyal(int tes){
+	// printf("%d\n",tes);
+}
 void main(){
+	signal (SIGINT, sinyal);
+	signal (SIGTSTP, sinyal);
 	char s[1000],s1[1000];
-/*	signal (SIGINT, a);
-	signal (SIGSTOP, a);
-	signal (SIGHUP, a);*/
 	char dflt[100];
 	int task1,task2;
 	char tsk1[100],tsk2[100];
@@ -34,10 +26,16 @@ void main(){
 		memset(pwdd3,0,sizeof(pwdd3));
 		memset(pwddd,0,sizeof(pwddd));
 		memset(s1,0,sizeof(s1));
+		memset(s,0,sizeof(s));
 		scanf("%[^\n]",s);
-		getchar();
-		// printf("%s\n", s);
-		if(s!=NULL){
+		if(getchar()==EOF){
+			return;
+		}
+		// printf("s=%s\n", s);
+		if(strcmp(s,"")==0){
+			//penyebab segmentation fault :(
+		}
+		else if(s!=NULL){
 			if(s[0]=='&'){
 				for(a=1;a<(int)strlen(s);a++){
 					s1[a-1]=s[a];
